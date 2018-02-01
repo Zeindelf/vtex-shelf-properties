@@ -1,0 +1,64 @@
+{
+  "name": "vtex-shelf-properties",
+  "version": "0.0.1",
+  "description": "Set custom properties on shelves templates on Vtex stores",
+  "main": "dist/vtex-shelf-properties.common.js",
+  "module": "dist/vtex-shelf-properties.esm.js",
+  "browser": "dist/vtex-shelf-properties.js",
+  "scripts": {
+    "build": "rollup -c",
+    "clear": "del-cli dist",
+    "compress": "uglifyjs dist/vtex-shelf-properties.js -o dist/vtex-shelf-properties.min.js -c -m --comments /^!!/",
+    "lint": "eslint src --fix",
+    "release": "npm run clear && npm run lint && npm run build && npm run compress",
+    "start": "./node_modules/.bin/rollup -c --watch"
+  },
+  "repository": "zeindelf/vtex-shelf-properties",
+  "homepage": "https://github.com/zeindelf/vtex-shelf-properties",
+  "license": "MIT",
+  "author": {
+    "name": "Zeindelf",
+    "email": "zeindelf@hotmail.com",
+    "homepage": "https://www.zeindelf.com"
+  },
+  "files": [
+    "dist",
+    "doc",
+    "lib"
+  ],
+  "keywords": [
+    "vtex",
+    "utils",
+    "utilities",
+    "helpers",
+    "data",
+    "shelf-properties",
+    "vtex-shelf-properties",
+    "vtex-shelf-properties.js",
+    "vtex-utils",
+    "javascript",
+    "js-helpers",
+    "js-utilities",
+    "js-utils",
+    "front-end",
+    "web",
+    "component",
+    "development"
+  ],
+  "dependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^8.1.2",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-env": "^1.6.1",
+    "del-cli": "^1.1.0",
+    "eslint": "^4.13.1",
+    "eslint-config-google": "^0.9.1",
+    "eslint-plugin-import": "^2.8.0",
+    "npm-run-all": "^4.1.2",
+    "rollup": "^0.53.0",
+    "rollup-plugin-babel": "^3.0.3",
+    "rollup-watch": "^4.3.1",
+    "uglify-js": "^3.2.2"
+  }
+}
