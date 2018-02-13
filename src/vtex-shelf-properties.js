@@ -7,12 +7,12 @@ import Methods from './vtex-shelf-properties.methods.js';
  * Main class
  */
 class VtexShelfProperties {
-    constructor(vtexUtils) {
+    constructor(vtexUtils, fnProperties) {
         /**
          * Version
          * @type {String}
          */
-        this.version = '0.0.1';
+        this.version = '0.1.0';
 
         /**
          * Package name
@@ -33,6 +33,19 @@ class VtexShelfProperties {
             throw new Error(CONSTANTS.messages.vtexUtilsVersionMessage);
         }
 
+        if ( ! vtexUtils.globalHelpers.isFunction(fnProperties) ) {
+            throw new TypeError(CONSTANTS.messages.fnProperties);
+        }
+
+        this.shelfClass = '';
+
+        /**
+         * Callback function to set properties
+         * Accepts two params: Current Element and current product object properties
+         * @type {Function}
+         */
+        this.fnProperties = fnProperties;
+
         /**
          * Global Helpers instance
          * @type {GlobalHelpers}
@@ -46,6 +59,12 @@ class VtexShelfProperties {
         this.vtexHelpers = vtexUtils.vtexHelpers;
 
         /**
+         * Vtex Catalog instance
+         * @type {VtexCatalog}
+         */
+        this.vtexCatalog = new vtexUtils.VtexCatalog(true);
+
+        /**
          * Extend public methods
          */
         this.globalHelpers.extend(VtexShelfProperties.prototype, Methods);
@@ -54,7 +73,6 @@ class VtexShelfProperties {
          * Init Helpers / Methods
          */
         this.setHelpers();
-        this.init();
     }
 }
 

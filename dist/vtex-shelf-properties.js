@@ -6,7 +6,7 @@
  * Copyright (c) 2018-2018 Zeindelf
  * Released under the MIT license
  *
- * Date: 2018-02-01T20:19:59.437Z
+ * Date: 2018-02-13T04:57:06.199Z
  */
 
 (function (global, factory) {
@@ -15,14 +15,14 @@
 	(global.VTEX = global.VTEX || {}, global.VTEX.VtexShelfProperties = factory());
 }(this, (function () { 'use strict';
 
-var vtexUtilsVersion = '0.5.0';
+var vtexUtilsVersion = '0.9.0';
 
 var CONSTANTS = {
-    API_URL: '/api/catalog_system/pub/products/search?fq=productId:',
     messages: {
         vtexUtils: 'VtexUtils.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-utils and use "new VtexMasterdata(new VtexUtils())"',
         vtexUtilsVersion: vtexUtilsVersion,
-        vtexUtilsVersionMessage: 'VtexUtils version must be higher than ' + vtexUtilsVersion + '. Download last version on https://www.npmjs.com/package/vtex-utils'
+        vtexUtilsVersionMessage: 'VtexUtils version must be higher than ' + vtexUtilsVersion + '. Download last version on https://www.npmjs.com/package/vtex-utils',
+        fnProperties: 'Callback must be a function'
     }
 };
 
@@ -56,21 +56,54 @@ var Private = function () {
 
         this._globalHelpers = null;
         this._vtexHelpers = null;
+        this._vtexCatalog = null;
     }
 
     createClass(Private, [{
         key: '_setHelpers',
-        value: function _setHelpers(globalHelpers, vtexHelpers) {
+        value: function _setHelpers(globalHelpers, vtexHelpers, vtexCatalog) {
             this._globalHelpers = globalHelpers;
             this._vtexHelpers = vtexHelpers;
+            this._vtexCatalog = vtexCatalog;
         }
     }, {
-        key: '_call',
-        value: function _call(productId) {
-            return $.ajax({
-                url: '' + CONSTANTS.API_URL + productId,
-                type: 'get'
+        key: '_setInstance',
+        value: function _setInstance(instance) {
+            this._shelfProperties = instance;
+        }
+    }, {
+        key: '_getProducts',
+        value: function _getProducts(productsId, $shelf) {
+            var _this = this;
+
+            return this._vtexCatalog.searchProductArray(productsId).then(function (productResponse) {
+                $shelf.map(function (index, product) {
+                    var $this = $(product);
+                    var productId = $this.data('productId');
+
+                    for (var productResponseId in productResponse) {
+                        if ({}.hasOwnProperty.call(productResponse, productResponseId)) {
+                            if (parseInt(productId) === parseInt(productResponseId)) {
+                                _this._shelfProperties.fnProperties.apply(_this._shelfProperties, [$this, productResponse[productResponseId]]);
+                                $this.addClass('is--loaded');
+                            }
+                        }
+                    }
+                });
+            }).then(function () {
+                return _this._requestEndEvent(_this._shelfProperties.eventName);
             });
+        }
+    }, {
+        key: '_requestEndEvent',
+        value: function _requestEndEvent(eventName) {
+            /* eslint-disable */
+            var ev = $.Event(eventName + '.vtexShelfProperties');
+            /* eslint-enable */
+
+            setTimeout(function () {
+                $(document).trigger(ev);
+            }, 0);
         }
     }]);
     return Private;
@@ -79,25 +112,46 @@ var Private = function () {
 var _private = new Private();
 
 var Methods = {
-    init: function init() {},
     setHelpers: function setHelpers() {
-        _private._setHelpers(this.globalHelpers, this.vtexHelpers);
+        _private._setHelpers(this.globalHelpers, this.vtexHelpers, this.vtexCatalog);
+        _private._setInstance(this);
+    },
+    setEventName: function setEventName(eventName) {
+        this.eventName = eventName;
+    },
+    setShelfContainer: function setShelfContainer(shelfClass) {
+        this.eventName = this.globalHelpers.isUndefined(this.eventName) ? 'requestEnd' : this.eventName;
+        this.shelfClass = shelfClass;
+
+        var $shelf = $(shelfClass + ':not(.is--loaded)');
+        var productsId = [];
+
+        if ($shelf.length < 1) {
+            return false;
+        }
+
+        $shelf.map(function (index, product) {
+            var $this = $(product);
+            var productId = $this.data('productId');
+
+            productsId.push(productId);
+        });
+
+        return _private._getProducts(productsId, $shelf);
+    },
+    update: function update() {
+        this.setShelfContainer(this.shelfClass);
     }
 };
 
-/**
- * Create a VtexMasterdata class
- * Main class
- */
-
-var VtexShelfProperties = function VtexShelfProperties(vtexUtils) {
+var VtexShelfProperties = function VtexShelfProperties(vtexUtils, fnProperties) {
   classCallCheck(this, VtexShelfProperties);
 
   /**
    * Version
    * @type {String}
    */
-  this.version = '0.0.1';
+  this.version = '0.1.0';
 
   /**
    * Package name
@@ -118,6 +172,19 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils) {
     throw new Error(CONSTANTS.messages.vtexUtilsVersionMessage);
   }
 
+  if (!vtexUtils.globalHelpers.isFunction(fnProperties)) {
+    throw new TypeError(CONSTANTS.messages.fnProperties);
+  }
+
+  this.shelfClass = '';
+
+  /**
+   * Callback function to set properties
+   * Accepts two params: Current Element and current product object properties
+   * @type {Function}
+   */
+  this.fnProperties = fnProperties;
+
   /**
    * Global Helpers instance
    * @type {GlobalHelpers}
@@ -131,6 +198,12 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils) {
   this.vtexHelpers = vtexUtils.vtexHelpers;
 
   /**
+   * Vtex Catalog instance
+   * @type {VtexCatalog}
+   */
+  this.vtexCatalog = new vtexUtils.VtexCatalog(true);
+
+  /**
    * Extend public methods
    */
   this.globalHelpers.extend(VtexShelfProperties.prototype, Methods);
@@ -139,7 +212,6 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils) {
    * Init Helpers / Methods
    */
   this.setHelpers();
-  this.init();
 };
 
 return VtexShelfProperties;

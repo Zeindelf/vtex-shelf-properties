@@ -58,16 +58,85 @@ import VtexShelfProperties from 'vtex-shelf-properties';
 
 With UMD (Universal Module Definition), the package is available on `VTEX` namespace.
 
+For every shelf type, you will need create a new instance of `VtexShelfProperties`
+
 ```js
 // First, initialize VtexUtils.js
 var vtexUtils = new VTEX.VtexUtils();
 
 // Initialize constructor passing VtexUtils.js as a param
-var vtexShelfProperties = new VTEX.VtexShelfProperties(vtexUtils);
+vtexShelfProperties = new VTEX.VtexShelfProperties(vtexUtils, handler);
+```
+
+### Instance Params
+The handler param is a callback function. There are two params: current DOM element and related product object info.
+
+This handle is used to set custom properties into DOM element (set on setShelfContainer method) inside a shelf.
+
+#### Example
+
+```js
+function myCustomProp($el, product) {
+    var markup =
+        '<a href="' + product.link + '" title="' + product.productName + '">' +
+            '<h2>' + product.productName + '</h2>' +
+            '<small>' + product.productReference + '</small>' +
+            '<p>' + product.description + '</p>' +
+        '</a>';
+
+    $el.append(markup);
+}
+
+vtexShelfProperties = new VTEX.VtexShelfProperties(vtexUtils, myCustomProp);
 ```
 
 ## Methods
 
+### vtexShelfProperties.setEventName([eventName])
+
+Create custom event name for actual instance.
+
+Needs to call before `setShelfContainer` method.
+
+- **eventName** (optional):
+  - Type: `String`
+  - Default: `'requestEnd'`
+  - Name of custom event when triggered on request end.
+
+#### Example
+
+```js
+// Set custom event name
+vtexShelfProperties.setEventName('shelfBasic');
+// And use like:
+$(document).on('shelfBasic.vtexShelfProperties', function(ev) {
+  window.console.log(ev);
+});
+
+// If not provide, the default event name is:
+$(document).on('requestEnd.vtexShelfProperties', function(ev) {
+  window.console.log(ev);
+});
+```
+
+### vtexShelfProperties.setShelfContainer(shelfClass)
+
+Any container inside your shelf to receive custom properties.
+
+Your container needs have a data attribute with product id.
+
+- **shelfClass**:
+  - Type: `String`
+  - Name of shelf container class
+
+#### Example
+
+```js
+// Your container
+<div class="js--shelf-basic" data-product-id"123"></div>
+
+vtexShelfProperties.setShelf('.js--shelf-basic');
+```
 
 ## License
 vtexShelfProperties.js is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
@@ -81,4 +150,3 @@ VtexUtils.js
 ## Todo
 
 - Docs
-- Lib
