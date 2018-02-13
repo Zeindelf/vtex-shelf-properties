@@ -1,12 +1,12 @@
 
 /*!!
- * VtexShelfProperties.js v0.0.1
+ * VtexShelfProperties.js v0.1.0
  * https://github.com/zeindelf/vtex-shelf-properties
  *
  * Copyright (c) 2018-2018 Zeindelf
  * Released under the MIT license
  *
- * Date: 2018-02-13T04:57:06.199Z
+ * Date: 2018-02-13T10:07:41.882Z
  */
 
 'use strict';
@@ -15,7 +15,7 @@ var vtexUtilsVersion = '0.9.0';
 
 var CONSTANTS = {
     messages: {
-        vtexUtils: 'VtexUtils.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-utils and use "new VtexMasterdata(new VtexUtils())"',
+        vtexUtils: 'VtexUtils.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-utils',
         vtexUtilsVersion: vtexUtilsVersion,
         vtexUtilsVersionMessage: 'VtexUtils version must be higher than ' + vtexUtilsVersion + '. Download last version on https://www.npmjs.com/package/vtex-utils',
         fnProperties: 'Callback must be a function'
@@ -139,6 +139,11 @@ var Methods = {
         this.setShelfContainer(this.shelfClass);
     }
 };
+
+/**
+ * Create a VtexMasterdata class
+ * Main class
+ */
 
 var VtexShelfProperties = function VtexShelfProperties(vtexUtils, fnProperties) {
   classCallCheck(this, VtexShelfProperties);

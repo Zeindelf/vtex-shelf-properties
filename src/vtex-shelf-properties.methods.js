@@ -36,5 +36,5 @@ export default {
 
     update() {
         this.setShelfContainer(this.shelfClass);
-    }
+    },
 };
