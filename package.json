@@ -1,6 +1,6 @@
 {
   "name": "vtex-shelf-properties",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "Set custom properties on shelves templates on Vtex stores",
   "main": "dist/vtex-shelf-properties.common.js",
   "module": "dist/vtex-shelf-properties.esm.js",
