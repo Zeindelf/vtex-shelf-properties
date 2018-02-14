@@ -7,7 +7,7 @@ import Methods from './vtex-shelf-properties.methods.js';
  * Main class
  */
 class VtexShelfProperties {
-    constructor(vtexUtils, fnProperties) {
+    constructor(vtexUtils, fnProperties, catalogCache = false) {
         /**
          * Version
          * @type {String}
@@ -37,6 +37,10 @@ class VtexShelfProperties {
             throw new TypeError(CONSTANTS.messages.fnProperties);
         }
 
+        /**
+         * Shelf container class
+         * @type {String}
+         */
         this.shelfClass = '';
 
         /**
@@ -62,7 +66,7 @@ class VtexShelfProperties {
          * Vtex Catalog instance
          * @type {VtexCatalog}
          */
-        this.vtexCatalog = new vtexUtils.VtexCatalog(true);
+        this.vtexCatalog = new vtexUtils.VtexCatalog(catalogCache);
 
         /**
          * Extend public methods

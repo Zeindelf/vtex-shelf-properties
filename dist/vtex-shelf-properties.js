@@ -6,7 +6,7 @@
  * Copyright (c) 2018-2018 Zeindelf
  * Released under the MIT license
  *
- * Date: 2018-02-13T10:07:41.882Z
+ * Date: 2018-02-13T23:50:24.053Z
  */
 
 (function (global, factory) {
@@ -22,7 +22,8 @@ var CONSTANTS = {
         vtexUtils: 'VtexUtils.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-utils',
         vtexUtilsVersion: vtexUtilsVersion,
         vtexUtilsVersionMessage: 'VtexUtils version must be higher than ' + vtexUtilsVersion + '. Download last version on https://www.npmjs.com/package/vtex-utils',
-        fnProperties: 'Callback must be a function'
+        fnProperties: 'Callback must be a function',
+        shelfClass: 'shelfClass is required and must be a string, eg. \'.js--shelf-class\''
     }
 };
 
@@ -105,6 +106,13 @@ var Private = function () {
                 $(document).trigger(ev);
             }, 0);
         }
+    }, {
+        key: '_validateShelfClass',
+        value: function _validateShelfClass(shelfClass) {
+            if (this._globalHelpers.isUndefined(shelfClass) || !this._globalHelpers.isString(shelfClass)) {
+                throw new Error(CONSTANTS.messages.shelfClass);
+            }
+        }
     }]);
     return Private;
 }();
@@ -120,6 +128,8 @@ var Methods = {
         this.eventName = eventName;
     },
     setShelfContainer: function setShelfContainer(shelfClass) {
+        _private._validateShelfClass(shelfClass);
+
         this.eventName = this.globalHelpers.isUndefined(this.eventName) ? 'requestEnd' : this.eventName;
         this.shelfClass = shelfClass;
 
@@ -140,16 +150,13 @@ var Methods = {
         return _private._getProducts(productsId, $shelf);
     },
     update: function update() {
+        _private._validateShelfClass(this.shelfClass);
         this.setShelfContainer(this.shelfClass);
     }
 };
 
-/**
- * Create a VtexMasterdata class
- * Main class
- */
-
 var VtexShelfProperties = function VtexShelfProperties(vtexUtils, fnProperties) {
+  var catalogCache = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
   classCallCheck(this, VtexShelfProperties);
 
   /**
@@ -181,6 +188,10 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, fnProperties) 
     throw new TypeError(CONSTANTS.messages.fnProperties);
   }
 
+  /**
+   * Shelf container class
+   * @type {String}
+   */
   this.shelfClass = '';
 
   /**
@@ -206,7 +217,7 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, fnProperties) 
    * Vtex Catalog instance
    * @type {VtexCatalog}
    */
-  this.vtexCatalog = new vtexUtils.VtexCatalog(true);
+  this.vtexCatalog = new vtexUtils.VtexCatalog(catalogCache);
 
   /**
    * Extend public methods

@@ -14,6 +14,8 @@ export default {
     },
 
     setShelfContainer(shelfClass) {
+        _private._validateShelfClass(shelfClass);
+
         this.eventName = ( this.globalHelpers.isUndefined(this.eventName) ) ? 'requestEnd' : this.eventName;
         this.shelfClass = shelfClass;
 
@@ -35,6 +37,7 @@ export default {
     },
 
     update() {
+        _private._validateShelfClass(this.shelfClass);
         this.setShelfContainer(this.shelfClass);
     },
 };
