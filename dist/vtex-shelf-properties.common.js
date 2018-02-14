@@ -6,7 +6,7 @@
  * Copyright (c) 2018-2018 Zeindelf
  * Released under the MIT license
  *
- * Date: 2018-02-14T00:33:04.036Z
+ * Date: 2018-02-14T01:08:28.673Z
  */
 
 'use strict';
@@ -50,52 +50,13 @@ var createClass = function () {
 var Private = function () {
     function Private() {
         classCallCheck(this, Private);
-
-        this._globalHelpers = null;
-        this._vtexHelpers = null;
-        this._vtexCatalog = null;
     }
 
     createClass(Private, [{
-        key: '_setHelpers',
-        value: function _setHelpers(globalHelpers, vtexHelpers, vtexCatalog) {
-            this._globalHelpers = globalHelpers;
-            this._vtexHelpers = vtexHelpers;
-            this._vtexCatalog = vtexCatalog;
-        }
-    }, {
-        key: '_setInstance',
-        value: function _setInstance(instance) {
-            this._shelfProperties = instance;
-        }
-    }, {
-        key: '_getProducts',
-        value: function _getProducts(productsId, $shelf) {
-            var _this = this;
-
-            return this._vtexCatalog.searchProductArray(productsId).then(function (productResponse) {
-                $shelf.map(function (index, product) {
-                    var $this = $(product);
-                    var productId = $this.data('productId');
-
-                    for (var productResponseId in productResponse) {
-                        if ({}.hasOwnProperty.call(productResponse, productResponseId)) {
-                            if (parseInt(productId) === parseInt(productResponseId)) {
-                                _this._shelfProperties.fnProperties.apply(_this._shelfProperties, [$this, productResponse[productResponseId]]);
-                                $this.addClass('is--loaded');
-                            }
-                        }
-                    }
-                });
-            }).then(function () {
-                return _this._requestEndEvent(_this._shelfProperties.eventName);
-            });
-        }
-    }, {
         key: '_requestEndEvent',
         value: function _requestEndEvent(eventName) {
             /* eslint-disable */
-            var ev = $.Event(eventName + '.vtexShelfProperties');
+            var ev = new $.Event(eventName + '.vtexShelfProperties');
             /* eslint-enable */
 
             setTimeout(function () {
@@ -104,8 +65,8 @@ var Private = function () {
         }
     }, {
         key: '_validateShelfClass',
-        value: function _validateShelfClass(shelfClass) {
-            if (this._globalHelpers.isUndefined(shelfClass) || !this._globalHelpers.isString(shelfClass)) {
+        value: function _validateShelfClass(shelfClass, globalHelpers) {
+            if (globalHelpers.isUndefined(shelfClass) || !globalHelpers.isString(shelfClass)) {
                 throw new Error(CONSTANTS.messages.shelfClass);
             }
         }
@@ -116,15 +77,11 @@ var Private = function () {
 var _private = new Private();
 
 var Methods = {
-    setHelpers: function setHelpers() {
-        _private._setHelpers(this.globalHelpers, this.vtexHelpers, this.vtexCatalog);
-        _private._setInstance(this);
-    },
     setEventName: function setEventName(eventName) {
         this.eventName = eventName;
     },
     setShelfContainer: function setShelfContainer(shelfClass) {
-        _private._validateShelfClass(shelfClass);
+        _private._validateShelfClass(shelfClass, this.globalHelpers);
 
         this.eventName = this.globalHelpers.isUndefined(this.eventName) ? 'requestEnd' : this.eventName;
         this.shelfClass = shelfClass;
@@ -143,11 +100,32 @@ var Methods = {
             productsId.push(productId);
         });
 
-        return _private._getProducts(productsId, $shelf);
+        return this._getProducts(productsId, $shelf);
     },
     update: function update() {
-        _private._validateShelfClass(this.shelfClass);
+        _private._validateShelfClass(this.shelfClass, this.globalHelpers);
         this.setShelfContainer(this.shelfClass);
+    },
+    _getProducts: function _getProducts(productsId, $shelf) {
+        var _this = this;
+
+        return this.vtexCatalog.searchProductArray(productsId).then(function (productResponse) {
+            $shelf.map(function (index, product) {
+                var $this = $(product);
+                var productId = $this.data('productId');
+
+                for (var productResponseId in productResponse) {
+                    if ({}.hasOwnProperty.call(productResponse, productResponseId)) {
+                        if (parseInt(productId) === parseInt(productResponseId)) {
+                            _this.fnProperties.apply(_this, [$this, productResponse[productResponseId]]);
+                            $this.addClass('is--loaded');
+                        }
+                    }
+                }
+            });
+        }).then(function () {
+            return _private._requestEndEvent(_this.eventName);
+        });
     }
 };
 
@@ -190,12 +168,6 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, fnProperties) 
   }
 
   /**
-   * Shelf container class
-   * @type {String}
-   */
-  this.shelfClass = '';
-
-  /**
    * Callback function to set properties
    * Accepts two params: Current Element and current product object properties
    * @type {Function}
@@ -209,12 +181,6 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, fnProperties) 
   this.globalHelpers = vtexUtils.globalHelpers;
 
   /**
-   * Vtex Helpers instance
-   * @type {VtexHelpers}
-   */
-  this.vtexHelpers = vtexUtils.vtexHelpers;
-
-  /**
    * Vtex Catalog instance
    * @type {VtexCatalog}
    */
@@ -224,11 +190,6 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, fnProperties) 
    * Extend public methods
    */
   this.globalHelpers.extend(VtexShelfProperties.prototype, Methods);
-
-  /**
-   * Init Helpers / Methods
-   */
-  this.setHelpers();
 };
 
 module.exports = VtexShelfProperties;

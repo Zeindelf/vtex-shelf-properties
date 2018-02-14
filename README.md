@@ -131,11 +131,13 @@ Your container needs have a data attribute with product id.
 
 #### Example
 
-```js
+```html
 // Your container
 <div class="js--shelf-basic" data-product-id"123"></div>
 
-vtexShelfProperties.setShelf('.js--shelf-basic');
+<script>
+  vtexShelfProperties.setShelf('.js--shelf-basic');
+</script>
 ```
 
 ## License

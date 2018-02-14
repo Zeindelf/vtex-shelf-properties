@@ -38,12 +38,6 @@ class VtexShelfProperties {
         }
 
         /**
-         * Shelf container class
-         * @type {String}
-         */
-        this.shelfClass = '';
-
-        /**
          * Callback function to set properties
          * Accepts two params: Current Element and current product object properties
          * @type {Function}
@@ -57,12 +51,6 @@ class VtexShelfProperties {
         this.globalHelpers = vtexUtils.globalHelpers;
 
         /**
-         * Vtex Helpers instance
-         * @type {VtexHelpers}
-         */
-        this.vtexHelpers = vtexUtils.vtexHelpers;
-
-        /**
          * Vtex Catalog instance
          * @type {VtexCatalog}
          */
@@ -72,11 +60,6 @@ class VtexShelfProperties {
          * Extend public methods
          */
         this.globalHelpers.extend(VtexShelfProperties.prototype, Methods);
-
-        /**
-         * Init Helpers / Methods
-         */
-        this.setHelpers();
     }
 }
 
