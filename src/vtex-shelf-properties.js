@@ -12,7 +12,7 @@ class VtexShelfProperties {
          * Version
          * @type {String}
          */
-        this.version = '0.1.5';
+        this.version = '0.2.0';
 
         /**
          * Package name
