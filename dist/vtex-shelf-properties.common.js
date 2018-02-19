@@ -6,18 +6,18 @@
  * Copyright (c) 2018-2018 Zeindelf
  * Released under the MIT license
  *
- * Date: 2018-02-14T06:12:22.122Z
+ * Date: 2018-02-19T01:19:50.014Z
  */
 
 'use strict';
 
-var vtexUtilsVersion = '0.9.1';
+var vtexCatalogVersion = '0.5.0';
 
 var CONSTANTS = {
     messages: {
-        vtexUtils: 'VtexUtils.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-utils',
-        vtexUtilsVersion: vtexUtilsVersion,
-        vtexUtilsVersionMessage: 'VtexUtils version must be higher than ' + vtexUtilsVersion + '. Download last version on https://www.npmjs.com/package/vtex-utils',
+        vtexCatalog: 'VtexCatalog.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-catalog',
+        vtexCatalogVersion: vtexCatalogVersion,
+        vtexCatalogVersionMessage: 'VtexCatalog version must be higher than ' + vtexCatalogVersion + '. Download last version on https://www.npmjs.com/package/vtex-catalog',
         fnProperties: 'Callback must be a function',
         shelfClass: 'shelfClass is required and must be a string, eg. \'.js--shelf-class\''
     }
@@ -87,18 +87,14 @@ var Methods = {
         this.shelfClass = shelfClass;
 
         var $shelf = $(shelfClass + ':not(.is--loaded)');
-        var productsId = [];
 
         if ($shelf.length < 1) {
             return false;
         }
 
-        $shelf.map(function (index, product) {
-            var $this = $(product);
-            var productId = $this.data('productId');
-
-            productsId.push(productId);
-        });
+        var productsId = $shelf.map(function (index, product) {
+            return $(product).data('productId');
+        }).get();
 
         return this._getProducts(productsId, $shelf);
     },
@@ -123,19 +119,14 @@ var Methods = {
                     }
                 }
             });
-        }).then(function () {
+        }).always(function () {
             return _private._requestEndEvent(_this.eventName);
         });
     }
 };
 
-/**
- * Create a VtexMasterdata class
- * Main class
- */
-
-var VtexShelfProperties = function VtexShelfProperties(vtexUtils, fnProperties) {
-  var catalogCache = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+var VtexShelfProperties = function VtexShelfProperties(vtexUtils, VtexCatalog, fnProperties) {
+  var catalogCache = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
   classCallCheck(this, VtexShelfProperties);
 
   /**
@@ -184,7 +175,7 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, fnProperties) 
    * Vtex Catalog instance
    * @type {VtexCatalog}
    */
-  this.vtexCatalog = new vtexUtils.VtexCatalog(catalogCache);
+  this.vtexCatalog = new VtexCatalog(vtexUtils, catalogCache);
 
   /**
    * Extend public methods

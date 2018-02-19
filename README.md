@@ -27,10 +27,11 @@ dist/
 
 Download the script [here](https://github.com/Zeindelf/vtex-shelf-properties/blob/master/dist/vtex-shelf-properties.min.js) and include it.
 
-You will need [VtexUtils.js](https://github.com/zeindelf/vtex-utils)
+You will need [VtexUtils.js](https://github.com/zeindelf/vtex-utils) and [VtexCatalog.js](https://github.com/zeindelf/vtex-catalog)
 
 ```html
 <script type="text/javascript" src="/arquivos/vtex-utils.min.js"></script>
+<script type="text/javascript" src="/arquivos/vtex-catalog.min.js"></script>
 <script type="text/javascript" src="/arquivos/vtex-shelf-properties.min.js"></script>
 ```
 
@@ -64,8 +65,12 @@ For every shelf type, you will need create a new instance of `VtexShelfPropertie
 // First, initialize VtexUtils.js
 var vtexUtils = new VTEX.VtexUtils();
 
-// Initialize constructor passing VtexUtils.js as a param
-vtexShelfProperties = new VTEX.VtexShelfProperties(vtexUtils, handler);
+// Then, check if you import VtexCatalog.js
+// VTEX.VtexCatalog
+
+// Initialize constructor passing a instance of VtexUtils.js as a param
+// and VtexCatalog.js not initialized
+vtexShelfProperties = new VTEX.VtexShelfProperties(vtexUtils, VTEX.VtexCatalog, handler);
 ```
 
 ### Instance Params
@@ -87,12 +92,12 @@ function myCustomProp($el, product) {
     $el.append(markup);
 }
 
-vtexShelfProperties = new VTEX.VtexShelfProperties(vtexUtils, myCustomProp);
+vtexShelfProperties = new VTEX.VtexShelfProperties(vtexUtils, VTEX.VtexCatalog, myCustomProp);
 ```
 
 ## Methods
 
-### vtexShelfProperties.setEventName([eventName])
+### vtexShelfProperties.setEventName(eventName)
 
 Create custom event name for actual instance.
 
@@ -148,6 +153,8 @@ vtexShelfProperties.js is open-sourced software licensed under the [MIT license]
 jQuery 1.8.3+
 
 VtexUtils.js
+
+VtexCatalog.js
 
 ## Todo
 

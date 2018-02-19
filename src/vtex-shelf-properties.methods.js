@@ -15,18 +15,12 @@ export default {
         this.shelfClass = shelfClass;
 
         const $shelf = $(`${shelfClass}:not(.is--loaded)`);
-        let productsId = [];
 
         if ( $shelf.length < 1 ) {
             return false;
         }
 
-        $shelf.map((index, product) => {
-            const $this = $(product);
-            const productId = $this.data('productId');
-
-            productsId.push(productId);
-        });
+        const productsId = $shelf.map((index, product) => $(product).data('productId')).get();
 
         return this._getProducts(productsId, $shelf);
     },
@@ -52,6 +46,6 @@ export default {
                 }
             });
         })
-        .then(() => _private._requestEndEvent(this.eventName));
+        .always(() => _private._requestEndEvent(this.eventName));
     },
 };

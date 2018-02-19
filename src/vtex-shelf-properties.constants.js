@@ -1,11 +1,11 @@
 
-const vtexUtilsVersion = '0.9.1';
+const vtexCatalogVersion = '0.5.0';
 
 export default {
     messages: {
-        vtexUtils: 'VtexUtils.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-utils',
-        vtexUtilsVersion: vtexUtilsVersion,
-        vtexUtilsVersionMessage: `VtexUtils version must be higher than ${vtexUtilsVersion}. Download last version on https://www.npmjs.com/package/vtex-utils`,
+        vtexCatalog: 'VtexCatalog.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-catalog',
+        vtexCatalogVersion: vtexCatalogVersion,
+        vtexCatalogVersionMessage: `VtexCatalog version must be higher than ${vtexCatalogVersion}. Download last version on https://www.npmjs.com/package/vtex-catalog`,
         fnProperties: 'Callback must be a function',
         shelfClass: `shelfClass is required and must be a string, eg. '.js--shelf-class'`,
     },
