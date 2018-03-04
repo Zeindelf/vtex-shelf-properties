@@ -22,19 +22,19 @@ class VtexShelfProperties {
 
         // Validate Vtex Utils
         if ( vtexUtils === undefined ) {
-            throw new TypeError(CONSTANTS.messages.vtexUtils);
+            throw new TypeError(CONSTANTS.MESSAGES.vtexUtils);
         }
 
         if ( vtexUtils.name !== '@VtexUtils' ) {
-            throw new TypeError(CONSTANTS.messages.vtexUtils);
+            throw new TypeError(CONSTANTS.MESSAGES.vtexUtils);
         }
 
-        if ( vtexUtils.version < CONSTANTS.messages.vtexUtilsVersion ) {
-            throw new Error(CONSTANTS.messages.vtexUtilsVersionMessage);
+        if ( vtexUtils.version < CONSTANTS.MESSAGES.vtexUtilsVersion ) {
+            throw new Error(CONSTANTS.MESSAGES.vtexUtilsVersionMessage);
         }
 
         if ( ! vtexUtils.globalHelpers.isFunction(fnProperties) ) {
-            throw new TypeError(CONSTANTS.messages.fnProperties);
+            throw new TypeError(CONSTANTS.MESSAGES.fnProperties);
         }
 
         /**
