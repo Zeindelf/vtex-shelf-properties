@@ -3,7 +3,7 @@ import CONSTANTS from './vtex-shelf-properties.constants.js';
 import Methods from './vtex-shelf-properties.methods.js';
 
 /**
- * Create a VtexMasterdata class
+ * Create a VtexShelfProperties class
  * Main class
  */
 class VtexShelfProperties {
@@ -12,7 +12,7 @@ class VtexShelfProperties {
          * Version
          * @type {String}
          */
-        this.version = '0.2.0';
+        this.version = '0.2.2';
 
         /**
          * Package name

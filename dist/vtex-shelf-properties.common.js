@@ -1,20 +1,21 @@
 
 /*!!
- * VtexShelfProperties.js v0.2.0
+ * VtexShelfProperties.js v0.2.2
  * https://github.com/zeindelf/vtex-shelf-properties
  *
  * Copyright (c) 2018-2018 Zeindelf
  * Released under the MIT license
  *
- * Date: 2018-02-19T03:59:14.153Z
+ * Date: 2018-03-04T18:32:25.354Z
  */
 
 'use strict';
 
-var vtexCatalogVersion = '0.5.0';
+var vtexCatalogVersion = '0.6.0';
 
 var CONSTANTS = {
-    messages: {
+    EVENT_TIME: 90, // Miliseconds
+    MESSAGES: {
         vtexCatalog: 'VtexCatalog.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-catalog',
         vtexCatalogVersion: vtexCatalogVersion,
         vtexCatalogVersionMessage: 'VtexCatalog version must be higher than ' + vtexCatalogVersion + '. Download last version on https://www.npmjs.com/package/vtex-catalog',
@@ -56,18 +57,18 @@ var Private = function () {
         key: '_requestEndEvent',
         value: function _requestEndEvent(eventName) {
             /* eslint-disable */
-            var ev = new $.Event(eventName + '.vtexShelfProperties');
+            var ev = $.Event(eventName + '.vtexShelfProperties');
             /* eslint-enable */
 
             setTimeout(function () {
                 $(document).trigger(ev);
-            }, 0);
+            }, CONSTANTS.EVENT_TIME);
         }
     }, {
         key: '_validateShelfClass',
         value: function _validateShelfClass(shelfClass, globalHelpers) {
             if (globalHelpers.isUndefined(shelfClass) || !globalHelpers.isString(shelfClass)) {
-                throw new Error(CONSTANTS.messages.shelfClass);
+                throw new Error(CONSTANTS.MESSAGES.shelfClass);
             }
         }
     }]);
@@ -126,7 +127,7 @@ var Methods = {
 };
 
 /**
- * Create a VtexMasterdata class
+ * Create a VtexShelfProperties class
  * Main class
  */
 
@@ -138,7 +139,7 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, VtexCatalog, f
    * Version
    * @type {String}
    */
-  this.version = '0.2.0';
+  this.version = '0.2.2';
 
   /**
    * Package name
@@ -148,19 +149,19 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, VtexCatalog, f
 
   // Validate Vtex Utils
   if (vtexUtils === undefined) {
-    throw new TypeError(CONSTANTS.messages.vtexUtils);
+    throw new TypeError(CONSTANTS.MESSAGES.vtexUtils);
   }
 
   if (vtexUtils.name !== '@VtexUtils') {
-    throw new TypeError(CONSTANTS.messages.vtexUtils);
+    throw new TypeError(CONSTANTS.MESSAGES.vtexUtils);
   }
 
-  if (vtexUtils.version < CONSTANTS.messages.vtexUtilsVersion) {
-    throw new Error(CONSTANTS.messages.vtexUtilsVersionMessage);
+  if (vtexUtils.version < CONSTANTS.MESSAGES.vtexUtilsVersion) {
+    throw new Error(CONSTANTS.MESSAGES.vtexUtilsVersionMessage);
   }
 
   if (!vtexUtils.globalHelpers.isFunction(fnProperties)) {
-    throw new TypeError(CONSTANTS.messages.fnProperties);
+    throw new TypeError(CONSTANTS.MESSAGES.fnProperties);
   }
 
   /**
