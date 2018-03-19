@@ -1,8 +1,8 @@
 
-const vtexCatalogVersion = '0.6.0';
+const vtexCatalogVersion = '0.7.0';
 
 export default {
-    EVENT_TIME: 90, // Miliseconds
+    EVENT_TIME: 150, // Miliseconds
     MESSAGES: {
         vtexCatalog: 'VtexCatalog.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-catalog',
         vtexCatalogVersion: vtexCatalogVersion,

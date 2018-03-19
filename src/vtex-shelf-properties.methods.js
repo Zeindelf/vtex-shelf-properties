@@ -25,6 +25,10 @@ export default {
         return this._getProducts(productsId, $shelf);
     },
 
+    setEventTime(time) {
+        _private._eventTime = this.globalHelpers.isNumber(time) ? time : CONSTANTS.EVENT_TIME;
+    },
+
     update() {
         _private._validateShelfClass(this.shelfClass, this.globalHelpers);
         this.setShelfContainer(this.shelfClass);

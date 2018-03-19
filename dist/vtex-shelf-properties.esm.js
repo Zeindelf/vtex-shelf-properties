@@ -6,13 +6,13 @@
  * Copyright (c) 2018-2018 Zeindelf
  * Released under the MIT license
  *
- * Date: 2018-03-04T18:32:25.354Z
+ * Date: 2018-03-18T06:33:36.062Z
  */
 
-var vtexCatalogVersion = '0.6.0';
+var vtexCatalogVersion = '0.7.0';
 
-var CONSTANTS = {
-    EVENT_TIME: 90, // Miliseconds
+var CONSTANTS$1 = {
+    EVENT_TIME: 150, // Miliseconds
     MESSAGES: {
         vtexCatalog: 'VtexCatalog.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-catalog',
         vtexCatalogVersion: vtexCatalogVersion,
@@ -54,19 +54,15 @@ var Private = function () {
     createClass(Private, [{
         key: '_requestEndEvent',
         value: function _requestEndEvent(eventName) {
-            /* eslint-disable */
-            var ev = $.Event(eventName + '.vtexShelfProperties');
-            /* eslint-enable */
-
             setTimeout(function () {
-                $(document).trigger(ev);
-            }, CONSTANTS.EVENT_TIME);
+                return $(document).trigger(eventName + '.vtexShelfProperties');
+            }, this._eventTime);
         }
     }, {
         key: '_validateShelfClass',
         value: function _validateShelfClass(shelfClass, globalHelpers) {
             if (globalHelpers.isUndefined(shelfClass) || !globalHelpers.isString(shelfClass)) {
-                throw new Error(CONSTANTS.MESSAGES.shelfClass);
+                throw new Error(CONSTANTS$1.MESSAGES.shelfClass);
             }
         }
     }]);
@@ -97,6 +93,9 @@ var Methods = {
 
         return this._getProducts(productsId, $shelf);
     },
+    setEventTime: function setEventTime(time) {
+        _private._eventTime = this.globalHelpers.isNumber(time) ? time : CONSTANTS.EVENT_TIME;
+    },
     update: function update() {
         _private._validateShelfClass(this.shelfClass, this.globalHelpers);
         this.setShelfContainer(this.shelfClass);
@@ -124,11 +123,6 @@ var Methods = {
     }
 };
 
-/**
- * Create a VtexShelfProperties class
- * Main class
- */
-
 var VtexShelfProperties = function VtexShelfProperties(vtexUtils, VtexCatalog, fnProperties) {
   var catalogCache = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
   classCallCheck(this, VtexShelfProperties);
@@ -147,19 +141,19 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, VtexCatalog, f
 
   // Validate Vtex Utils
   if (vtexUtils === undefined) {
-    throw new TypeError(CONSTANTS.MESSAGES.vtexUtils);
+    throw new TypeError(CONSTANTS$1.MESSAGES.vtexUtils);
   }
 
   if (vtexUtils.name !== '@VtexUtils') {
-    throw new TypeError(CONSTANTS.MESSAGES.vtexUtils);
+    throw new TypeError(CONSTANTS$1.MESSAGES.vtexUtils);
   }
 
-  if (vtexUtils.version < CONSTANTS.MESSAGES.vtexUtilsVersion) {
-    throw new Error(CONSTANTS.MESSAGES.vtexUtilsVersionMessage);
+  if (vtexUtils.version < CONSTANTS$1.MESSAGES.vtexUtilsVersion) {
+    throw new Error(CONSTANTS$1.MESSAGES.vtexUtilsVersionMessage);
   }
 
   if (!vtexUtils.globalHelpers.isFunction(fnProperties)) {
-    throw new TypeError(CONSTANTS.MESSAGES.fnProperties);
+    throw new TypeError(CONSTANTS$1.MESSAGES.fnProperties);
   }
 
   /**
