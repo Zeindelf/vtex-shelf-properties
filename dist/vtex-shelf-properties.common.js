@@ -1,12 +1,12 @@
 
 /*!!
- * VtexShelfProperties.js v0.3.0
+ * VtexShelfProperties.js v0.4.0
  * https://github.com/zeindelf/vtex-shelf-properties
  *
  * Copyright (c) 2018-2018 Zeindelf
  * Released under the MIT license
  *
- * Date: 2018-05-28T03:44:21.912Z
+ * Date: 2018-05-28T04:53:06.051Z
  */
 
 'use strict';
@@ -128,6 +128,11 @@ var Methods = {
     }
 };
 
+/**
+ * Create a VtexShelfProperties class
+ * Main class
+ */
+
 var VtexShelfProperties = function VtexShelfProperties(vtexUtils, vtexCatalog, fnProperties) {
   classCallCheck(this, VtexShelfProperties);
 
@@ -135,7 +140,7 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, vtexCatalog, f
    * Version
    * @type {String}
    */
-  this.version = '0.3.0';
+  this.version = '0.4.0';
 
   /**
    * Package name
