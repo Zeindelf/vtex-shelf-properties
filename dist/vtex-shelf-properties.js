@@ -6,7 +6,7 @@
  * Copyright (c) 2018-2018 Zeindelf
  * Released under the MIT license
  *
- * Date: 2018-03-19T18:21:04.896Z
+ * Date: 2018-05-28T03:44:21.912Z
  */
 
 (function (global, factory) {
@@ -15,16 +15,16 @@
 	(global.VTEX = global.VTEX || {}, global.VTEX.VtexShelfProperties = factory());
 }(this, (function () { 'use strict';
 
-var vtexCatalogVersion = '0.7.0';
+var vtexCatalogVersion = '1.0.0';
 
-var CONSTANTS$1 = {
-    EVENT_TIME: 150, // Miliseconds
+var CONSTANTS = {
     MESSAGES: {
+        vtexUtils: 'VtexUtils.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-utils',
         vtexCatalog: 'VtexCatalog.js is required and must be an instance. Download it from https://www.npmjs.com/package/vtex-catalog',
         vtexCatalogVersion: vtexCatalogVersion,
         vtexCatalogVersionMessage: 'VtexCatalog version must be higher than ' + vtexCatalogVersion + '. Download last version on https://www.npmjs.com/package/vtex-catalog',
         fnProperties: 'Callback must be a function',
-        shelfClass: 'shelfClass is required and must be a string, eg. \'.js--shelf-class\''
+        shelfClass: 'shelfClass is required and must be a string, e.g. \'.js--shelf-class\''
     }
 };
 
@@ -58,18 +58,20 @@ var Private = function () {
     }
 
     createClass(Private, [{
-        key: '_requestEndEvent',
-        value: function _requestEndEvent(eventName) {
-            setTimeout(function () {
-                return $(document).trigger(eventName + '.vtexShelfProperties');
-            }, this._eventTime);
-        }
-    }, {
         key: '_validateShelfClass',
         value: function _validateShelfClass(shelfClass, globalHelpers) {
             if (globalHelpers.isUndefined(shelfClass) || !globalHelpers.isString(shelfClass)) {
-                throw new Error(CONSTANTS$1.MESSAGES.shelfClass);
+                throw new Error(CONSTANTS.MESSAGES.shelfClass);
             }
+        }
+    }, {
+        key: '_requestEndEvent',
+        value: function _requestEndEvent(eventName) {
+            /* eslint-disable */
+            var ev = $.Event(eventName + '.vtexShelfProperties');
+            /* eslint-enable */
+
+            $(document).trigger(ev);
         }
     }]);
     return Private;
@@ -81,13 +83,17 @@ var Methods = {
     setEventName: function setEventName(eventName) {
         this.eventName = eventName;
     },
+    setLoadedClass: function setLoadedClass(className) {
+        this.loadedClass = className;
+    },
     setShelfContainer: function setShelfContainer(shelfClass) {
         _private._validateShelfClass(shelfClass, this.globalHelpers);
 
         this.eventName = this.globalHelpers.isUndefined(this.eventName) ? 'requestEnd' : this.eventName;
+        this.loadedClass = this.globalHelpers.isUndefined(this.loadedClass) ? 'is--loaded' : this.loadedClass;
         this.shelfClass = shelfClass;
 
-        var $shelf = $(shelfClass + ':not(.is--loaded)');
+        var $shelf = $(shelfClass + ':not(.' + this.loadedClass + ')');
 
         if ($shelf.length < 1) {
             return false;
@@ -98,9 +104,6 @@ var Methods = {
         }).get();
 
         return this._getProducts(productsId, $shelf);
-    },
-    setEventTime: function setEventTime(time) {
-        _private._eventTime = this.globalHelpers.isNumber(time) ? time : CONSTANTS.EVENT_TIME;
     },
     update: function update() {
         _private._validateShelfClass(this.shelfClass, this.globalHelpers);
@@ -116,9 +119,9 @@ var Methods = {
 
                 for (var productResponseId in productResponse) {
                     if ({}.hasOwnProperty.call(productResponse, productResponseId)) {
-                        if (parseInt(productId) === parseInt(productResponseId)) {
+                        if (parseInt(productId, 10) === parseInt(productResponseId, 10)) {
                             _this.fnProperties.apply(_this, [$this, productResponse[productResponseId]]);
-                            $this.addClass('is--loaded');
+                            $this.addClass(_this.loadedClass);
                         }
                     }
                 }
@@ -129,13 +132,7 @@ var Methods = {
     }
 };
 
-/**
- * Create a VtexShelfProperties class
- * Main class
- */
-
-var VtexShelfProperties = function VtexShelfProperties(vtexUtils, VtexCatalog, fnProperties) {
-  var catalogCache = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+var VtexShelfProperties = function VtexShelfProperties(vtexUtils, vtexCatalog, fnProperties) {
   classCallCheck(this, VtexShelfProperties);
 
   /**
@@ -150,21 +147,31 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, VtexCatalog, f
    */
   this.name = '@VtexShelfProperties';
 
-  // Validate Vtex Utils
+  // Validate Vtex Libs
   if (vtexUtils === undefined) {
-    throw new TypeError(CONSTANTS$1.MESSAGES.vtexUtils);
+    throw new TypeError(CONSTANTS.MESSAGES.vtexUtils);
   }
 
-  if (vtexUtils.name !== '@VtexUtils') {
-    throw new TypeError(CONSTANTS$1.MESSAGES.vtexUtils);
+  if (vtexCatalog === undefined) {
+    throw new TypeError(CONSTANTS.MESSAGES.vtexCatalog);
   }
 
-  if (vtexUtils.version < CONSTANTS$1.MESSAGES.vtexUtilsVersion) {
-    throw new Error(CONSTANTS$1.MESSAGES.vtexUtilsVersionMessage);
+  /**
+   * Vtex Catalog instance
+   * @type {VtexCatalog}
+   */
+  this.vtexCatalog = vtexCatalog;
+
+  if (this.vtexCatalog.name !== '@VtexCatalog') {
+    throw new TypeError(CONSTANTS.MESSAGES.vtexCatalog);
+  }
+
+  if (this.vtexCatalog.version < CONSTANTS.MESSAGES.vtexCatalogVersion) {
+    throw new Error(CONSTANTS.MESSAGES.vtexCatalogVersionMessage);
   }
 
   if (!vtexUtils.globalHelpers.isFunction(fnProperties)) {
-    throw new TypeError(CONSTANTS$1.MESSAGES.fnProperties);
+    throw new TypeError(CONSTANTS.MESSAGES.fnProperties);
   }
 
   /**
@@ -179,12 +186,6 @@ var VtexShelfProperties = function VtexShelfProperties(vtexUtils, VtexCatalog, f
    * @type {GlobalHelpers}
    */
   this.globalHelpers = vtexUtils.globalHelpers;
-
-  /**
-   * Vtex Catalog instance
-   * @type {VtexCatalog}
-   */
-  this.vtexCatalog = new VtexCatalog(vtexUtils, catalogCache);
 
   /**
    * Extend public methods

@@ -7,7 +7,7 @@ import Methods from './vtex-shelf-properties.methods.js';
  * Main class
  */
 class VtexShelfProperties {
-    constructor(vtexUtils, VtexCatalog, fnProperties, catalogCache = false) {
+    constructor(vtexUtils, vtexCatalog, fnProperties) {
         /**
          * Version
          * @type {String}
@@ -20,20 +20,30 @@ class VtexShelfProperties {
          */
         this.name = '@VtexShelfProperties';
 
-        // Validate Vtex Utils
+        // Validate Vtex Libs
         if ( vtexUtils === undefined ) {
             throw new TypeError(CONSTANTS.MESSAGES.vtexUtils);
         }
 
-        if ( vtexUtils.name !== '@VtexUtils' ) {
-            throw new TypeError(CONSTANTS.MESSAGES.vtexUtils);
+        if ( vtexCatalog === undefined ) {
+            throw new TypeError(CONSTANTS.MESSAGES.vtexCatalog);
         }
 
-        if ( vtexUtils.version < CONSTANTS.MESSAGES.vtexUtilsVersion ) {
-            throw new Error(CONSTANTS.MESSAGES.vtexUtilsVersionMessage);
+        /**
+         * Vtex Catalog instance
+         * @type {VtexCatalog}
+         */
+        this.vtexCatalog = vtexCatalog;
+
+        if ( this.vtexCatalog.name !== '@VtexCatalog' ) {
+            throw new TypeError(CONSTANTS.MESSAGES.vtexCatalog);
         }
 
-        if ( ! vtexUtils.globalHelpers.isFunction(fnProperties) ) {
+        if ( this.vtexCatalog.version < CONSTANTS.MESSAGES.vtexCatalogVersion ) {
+            throw new Error(CONSTANTS.MESSAGES.vtexCatalogVersionMessage);
+        }
+
+        if ( !vtexUtils.globalHelpers.isFunction(fnProperties) ) {
             throw new TypeError(CONSTANTS.MESSAGES.fnProperties);
         }
 
@@ -49,12 +59,6 @@ class VtexShelfProperties {
          * @type {GlobalHelpers}
          */
         this.globalHelpers = vtexUtils.globalHelpers;
-
-        /**
-         * Vtex Catalog instance
-         * @type {VtexCatalog}
-         */
-        this.vtexCatalog = new VtexCatalog(vtexUtils, catalogCache);
 
         /**
          * Extend public methods

@@ -9,7 +9,6 @@ Set custom properties on shelves templates on Vtex stores.
 - [Methods](#methods)
 - [License](#license)
 - [Dependencies](#dependencies)
-- [Todo](#todo)
 
 ## Main
 
@@ -65,21 +64,24 @@ For every shelf type, you will need create a new instance of `VtexShelfPropertie
 // First, initialize VtexUtils.js
 var vtexUtils = new VTEX.VtexUtils();
 
-// Then, check if you import VtexCatalog.js
-// VTEX.VtexCatalog
+// Then, initialize VtexCatalog.js
+var vtexCatalog = VTEX.VtexCatalog(vtexUtils);
 
-// Initialize constructor passing a instance of VtexUtils.js as a param
-// and VtexCatalog.js not initialized
-vtexShelfProperties = new VTEX.VtexShelfProperties(vtexUtils, VTEX.VtexCatalog, handler);
+// Initialize constructor passing a instance of VtexUtils.js and VtexCatalog.js as a param
+vtexShelfProperties = new VTEX.VtexShelfProperties(vtexUtils, vtexCatalog, handler);
 ```
 
 ### Instance Params
-The handler param is a callback function. There are two params: current DOM element and related product object info.
+The `handler` param is a callback function. There are two params: current DOM element and related product object info.
 
 This handle is used to set custom properties into DOM element (set on setShelfContainer method) inside a shelf.
 
 #### Example
 
+```html
+<!-- Inside a Shelf Template, create your container -->
+<div class="js--shelf-basic" data-product-id"$product.Id"></div>
+```
 ```js
 function myCustomProp($el, product) {
     var markup =
@@ -92,10 +94,39 @@ function myCustomProp($el, product) {
     $el.append(markup);
 }
 
-vtexShelfProperties = new VTEX.VtexShelfProperties(vtexUtils, VTEX.VtexCatalog, myCustomProp);
+var vtexShelfProperties = new VTEX.VtexShelfProperties(vtexUtils, vtexCatalog, myCustomProp);
+shelfProperties.setLoadedClass('is--shelf-loaded');
+shelfProperties.setEventName('shelfBasic');
+shelfProperties.setShelfContainer('.js--shelf-basic');
 ```
 
 ## Methods
+
+### vtexShelfProperties.setLoadedClass(className)
+
+Add a custom class on loaded elements.
+
+Default loaded class is `is--loaded`
+
+Needs to call before `setShelfContainer` method.
+
+- **className**:
+  - Type: `String`
+  - Name of custom loaded class
+
+#### Example
+
+```js
+// Set custom loaded class
+vtexShelfProperties.setLoadedClass('is--shelf-loaded');
+```
+```html
+<!-- Your element class is like: -->
+<div class="js--shelf-basic is--shelf-loaded" data-product-id"123">
+  <!-- Properties added -->
+</div>
+```
+
 
 ### vtexShelfProperties.setEventName(eventName)
 
@@ -103,9 +134,8 @@ Create custom event name for actual instance.
 
 Needs to call before `setShelfContainer` method.
 
-- **eventName** (optional):
+- **eventName**:
   - Type: `String`
-  - Default: `'requestEnd'`
   - Name of custom event when triggered on request end.
 
 #### Example
@@ -118,11 +148,12 @@ $(document).on('shelfBasic.vtexShelfProperties', function(ev) {
   window.console.log(ev);
 });
 
-// If not provide, the default event name is:
+// If this method is not provide, the default event name is:
 $(document).on('requestEnd.vtexShelfProperties', function(ev) {
   window.console.log(ev);
 });
 ```
+
 
 ### vtexShelfProperties.setShelfContainer(shelfClass)
 
@@ -137,7 +168,7 @@ Your container needs have a data attribute with product id.
 #### Example
 
 ```html
-// Your container
+<!-- Your container -->
 <div class="js--shelf-basic" data-product-id"123"></div>
 
 <script>
@@ -155,7 +186,3 @@ jQuery 1.8.3+
 VtexUtils.js
 
 VtexCatalog.js
-
-## Todo
-
-- Docs

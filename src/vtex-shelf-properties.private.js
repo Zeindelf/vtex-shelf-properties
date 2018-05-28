@@ -2,14 +2,18 @@
 import CONSTANTS from './vtex-shelf-properties.constants.js';
 
 class Private {
-    _requestEndEvent(eventName) {
-        setTimeout(() => $(document).trigger(`${eventName}.vtexShelfProperties`), this._eventTime);
-    }
-
     _validateShelfClass(shelfClass, globalHelpers) {
         if ( globalHelpers.isUndefined(shelfClass) || ! globalHelpers.isString(shelfClass) ) {
             throw new Error(CONSTANTS.MESSAGES.shelfClass);
         }
+    }
+
+    _requestEndEvent(eventName) {
+        /* eslint-disable */
+        const ev = $.Event(`${eventName}.vtexShelfProperties`);
+        /* eslint-enable */
+
+        $(document).trigger(ev);
     }
 }
 

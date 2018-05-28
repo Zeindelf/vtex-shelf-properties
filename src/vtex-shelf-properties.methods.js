@@ -8,13 +8,18 @@ export default {
         this.eventName = eventName;
     },
 
+    setLoadedClass(className) {
+        this.loadedClass = className;
+    },
+
     setShelfContainer(shelfClass) {
         _private._validateShelfClass(shelfClass, this.globalHelpers);
 
         this.eventName = ( this.globalHelpers.isUndefined(this.eventName) ) ? 'requestEnd' : this.eventName;
+        this.loadedClass = ( this.globalHelpers.isUndefined(this.loadedClass) ) ? 'is--loaded' : this.loadedClass;
         this.shelfClass = shelfClass;
 
-        const $shelf = $(`${shelfClass}:not(.is--loaded)`);
+        const $shelf = $(`${shelfClass}:not(.${this.loadedClass})`);
 
         if ( $shelf.length < 1 ) {
             return false;
@@ -23,10 +28,6 @@ export default {
         const productsId = $shelf.map((index, product) => $(product).data('productId')).get();
 
         return this._getProducts(productsId, $shelf);
-    },
-
-    setEventTime(time) {
-        _private._eventTime = this.globalHelpers.isNumber(time) ? time : CONSTANTS.EVENT_TIME;
     },
 
     update() {
@@ -42,9 +43,9 @@ export default {
 
                 for ( let productResponseId in productResponse ) {
                     if ( {}.hasOwnProperty.call(productResponse, productResponseId) ) {
-                        if ( parseInt(productId) === parseInt(productResponseId) ) {
+                        if ( parseInt(productId, 10) === parseInt(productResponseId, 10) ) {
                             this.fnProperties.apply(this, [$this, productResponse[productResponseId]]);
-                            $this.addClass('is--loaded');
+                            $this.addClass(this.loadedClass);
                         }
                     }
                 }
